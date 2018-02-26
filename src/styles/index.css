@@ -3,3 +3,18 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.search-bar{
+  display: flex;
+  justify-content: space-evenly;
+  max-width: 920px;
+  margin: auto;
+}
+.search-bar__datepicker{
+  display: inline-flex;
+
+}
+.flights-table{
+  max-width: 920px;
+  margin: auto;
+}

@@ -1,6 +1,14 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import {
+  Table,
+  TableBody,
+  TableHeader,
+  TableHeaderColumn,
+  TableRow,
+  TableRowColumn,
+} from 'material-ui/Table';
 
 class FlightList extends Component {
 
@@ -18,20 +26,6 @@ class FlightList extends Component {
 
   render() {
 
-  /*  if (this.props.feedQuery && this.props.feedQuery.loading) {
-        
-        return <div>Loading</div>
-      }
-    
-      // 2
-      if (this.props.feedQuery && this.props.feedQuery.error) {
-        return <div>Error</div>
-      }
-    
-      // 3
-      const linksToRender = this.props.feedQuery.feed.links
-*/    
-
       if (this.props.data && this.props.data.loading) {
         console.log('loading ', this.props);
         return <div>Loading</div>
@@ -39,16 +33,31 @@ class FlightList extends Component {
       if (this.props.data && this.props.data.error) {
         return <div>Error</div>
       }
-      if(this.props.data.allFlights){
+      if(this.props.data && this.props.data.allFlights){
         console.log('fetched ', this.props);
         
-        const flights = this.props.data.allFlights.edges.map( function(edge, i){
-          return <li key={i}> {edge.node.arrival.localTime} {edge.node.departure.localTime} {edge.node.price.amount} {edge.node.price.currency}</li>
-        }) 
-        return flights 
-        
+        return (<div class="flights-table">
+          <Table>
+            <TableHeader displaySelectAll={false}>
+              <TableRow >
+                <TableHeaderColumn>Departure</TableHeaderColumn>
+                <TableHeaderColumn>Arrival</TableHeaderColumn>
+                <TableHeaderColumn>Price</TableHeaderColumn>
+              </TableRow>
+            </TableHeader>
+            <TableBody displayRowCheckbox={false}>
+              {this.props.data.allFlights.edges.map( function(edge, i){
+                return <TableRow  key={i}>
+                  <TableRowColumn>{edge.node.departure.localTime}</TableRowColumn>
+                  <TableRowColumn>{edge.node.arrival.localTime}</TableRowColumn>
+                  <TableRowColumn>{edge.node.price.amount} {edge.node.price.currency}</TableRowColumn>
+                </TableRow>
+              })}
+            </TableBody>
+          </Table>
+          </div>)
       }
-      return <div> s </div>
+      return <div></div>
 
   } 
 }
@@ -56,7 +65,7 @@ class FlightList extends Component {
 
 // 1
 const FEED_QUERY = gql`
-query flights($departure: String, $destination: String){
+query flights($departure: String, $destination: String, $departureDate: Date){
   allFlights(search: 
     { 
       from: {
@@ -65,7 +74,8 @@ query flights($departure: String, $destination: String){
       to: {
         location: $destination
       }, 
-      date: { from: "2018-03-02", to:"2018-03-03",}} ){
+      date: { exact: $departureDate}
+    }){
       edges{
         node{
           departure {
@@ -89,16 +99,18 @@ query flights($departure: String, $destination: String){
 //departure(departure: $departure)
 // 3
 //  skip: (props) => !props.departure || !props.destination,
+
+
 console.log('this.props: ', this.props);
 export default graphql(FEED_QUERY, { 
-  options(props){ 
-   // return () => {
-      return{
-        variables: { 
-          departure: props.departure , 
-          destination: props.destination
-        }
+  skip: (props) => !props.departure || !props.destination || !props.departureDate,
+  options: (props) =>{ 
+    return{
+      variables: { 
+        departure: props.departure , 
+        destination: props.destination,
+        departureDate: props.departureDateFormatted
       }
     }
-  //}
+  }
 }) (FlightList)

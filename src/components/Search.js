@@ -1,13 +1,32 @@
 import React, { Component } from 'react'
+import {DatePicker, TextField} from 'material-ui';
+
 
 class Search extends Component {
 
+
   render() {
     return (
-        <div>
-            <div>Search</div>
-            <input type="text" onChange= {event => this.props.handleDepartureChange(event.target.value)} />
-            <input type="text"  onChange={event => this.props.handleDestinationChange(event.target.value)} />
+        <div className="search-bar">
+            <TextField
+                onChange={this.props.handleDepartureChange}
+                hintText="Wroclaw"
+                floatingLabelText="Departure"
+            />
+            <TextField
+                onChange={this.props.handleDestinationChange}
+                hintText="Barcelona"
+                floatingLabelText="Arrival"
+            />
+            <div className="search-bar__datepicker">
+            <DatePicker
+                onChange={this.props.handleDepartureDateChange}
+                floatingLabelText="Departure"
+                defaultDate={this.props.departureDate}
+                container="inline" 
+                mode="landscape"
+            />
+            </div>
         </div>
     ) 
   } 
