@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {DatePicker, TextField} from 'material-ui';
+import {DatePicker, TextField, AutoComplete} from 'material-ui';
 
 
 class Search extends Component {
@@ -8,6 +8,7 @@ class Search extends Component {
   render() {
     return (
         <div className="search-bar">
+
             <TextField
                 onChange={this.props.handleDepartureChange}
                 hintText="Wroclaw"

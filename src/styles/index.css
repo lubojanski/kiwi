@@ -18,3 +18,8 @@ body {
   max-width: 920px;
   margin: auto;
 }
+.flights-table__buttons{
+  margin: auto;
+  display: flex;
+  justify-content: center;
+}

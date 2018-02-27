@@ -9,6 +9,7 @@ import {
   TableRow,
   TableRowColumn,
 } from 'material-ui/Table';
+import RaisedButton from 'material-ui/RaisedButton';
 
 class FlightList extends Component {
 
@@ -60,7 +61,13 @@ class FlightList extends Component {
               })}
             </TableBody>
           </Table>
-          <div onClick={this.props.loadMoreEntries}>Load more</div>
+          <div className="flights-table__buttons">
+            <RaisedButton onClick={this.props.loadPrevEntries} label="Previous Page"  />
+            { this.props.data.allFlights.pageInfo.hasNextPage && 
+            <RaisedButton onClick={this.props.loadMoreEntries} label="Next Page"  />
+            }
+          </div>
+          
           </div>)
       }
       return <div></div>
@@ -68,10 +75,14 @@ class FlightList extends Component {
   } 
 }
 
-
+/*
+{ this.props.data.allFlights.pageInfo.hasPreviousPage && 
+          }
+          { this.props.data.allFlights.pageInfo.hasNextPage && 
+          }*/
 // 1
 const FEED_QUERY = gql`
-query flights($departure: String, $destination: String, $departureDate: Date, $cursor: String){
+query flights($departure: String, $destination: String, $departureDate: Date, $after: String, $before: String){
   allFlights(search: 
     { 
       from: {
@@ -83,7 +94,8 @@ query flights($departure: String, $destination: String, $departureDate: Date, $c
       date: { exact: $departureDate}
     },
     first: 5,
-    after: $cursor){
+    after: $after,
+    before: $before){
       edges{
         node{
           departure {
@@ -105,6 +117,7 @@ query flights($departure: String, $destination: String, $departureDate: Date, $c
         startCursor
         endCursor
         hasNextPage
+        hasPreviousPage
       }
   }
 }
@@ -131,11 +144,10 @@ export default graphql(FEED_QUERY, {
     return {
       ...props,
       loadMoreEntries: () => {
-        console.log('x',props.data.fetchMore);
         return props.data.fetchMore({
           query: FEED_QUERY,
           variables: {
-            cursor: props.data.allFlights.pageInfo.endCursor,
+            after: props.data.allFlights.pageInfo.endCursor,
             ...props.data.variables
           },
           updateQuery: (previousResult, { fetchMoreResult }) => {
@@ -154,6 +166,30 @@ export default graphql(FEED_QUERY, {
           },
         });
       },
+      loadPrevEntries: () => {
+        return props.data.fetchMore({
+          query: FEED_QUERY,
+          variables: {
+            before: props.data.allFlights.pageInfo.startCursor,
+            ...props.data.variables
+          },
+          updateQuery: (previousResult, { fetchMoreResult }) => {
+            const newEdges = fetchMoreResult.allFlights.edges;
+            const pageInfo = fetchMoreResult.allFlights.pageInfo;
+
+            return newEdges.length ? {
+              // Put the new comments at the end of the list and update `pageInfo`
+              // so we have the new `endCursor` and `hasNextPage` values
+              allFlights: {
+                __typename: previousResult.allFlights.__typename,
+                edges: newEdges,
+                pageInfo,
+              },
+            } : previousResult;
+          },
+        });
+      },
+
     }
   }
 }) (FlightList)
