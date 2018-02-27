@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import Search from './Search'
 import FlightList from './FlightList'
 import moment from 'moment'
-import {Card} from 'material-ui/Card';
 
 
 class App extends Component {
