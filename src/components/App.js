@@ -33,7 +33,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Search autocomplete={this.state.autocomplete} autocompletePhrase={this.state.autocompletePhrase} departure={this.state.departure} destination={this.destination} handleDepartureChange={this.handleDepartureChange} handleDestinationChange={this.handleDestinationChange} handleDepartureDateChange={this.handleDepartureDateChange} handleArrivalDateChange={this.handleArrivalDateChange} departureDate={this.state.departureDate}/>
+        <Search autocomplete={this.state.autocomplete} autocompletePhrase={this.state.autocompletePhrase}  handleDepartureChange={this.handleDepartureChange} handleDestinationChange={this.handleDestinationChange} handleDepartureDateChange={this.handleDepartureDateChange} departureDate={this.state.departureDate}/>
         <FlightList  departure={this.state.departure} destination={this.state.destination} departureDate={this.state.departureDate} departureDateFormatted={this.state.departureDateFormatted}/>
       </div>
     )
