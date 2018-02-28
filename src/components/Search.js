@@ -44,9 +44,7 @@ query locations( $autocompletePhrase: String){
         edges{
           node{
             city {
-              locationId
               name
-              slug
             }
           }
         }

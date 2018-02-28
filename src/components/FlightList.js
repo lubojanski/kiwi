@@ -13,18 +13,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 class FlightList extends Component {
 
-  /*componentWillReceiveProps(nextProps) {
-    // You don't have to do this check first, but it can help prevent an unneeded render
-    if (nextProps.departure !== this.props.departure || nextProps.destination !== this.props.destination  ) {
-      this.props.data.refetch({
-        variables: { 
-          departure: nextProps.departure, 
-          destination: nextProps.destination
-        }
-      });
-    }
-  }*/
-
+  loadNextPage = () => this.props.loadMoreEntries("after", "endCursor")
+  loadPreviousPage = () => this.props.loadMoreEntries("before", "startCursor")
 
   render() {
 
@@ -36,7 +26,6 @@ class FlightList extends Component {
         
         return <div>Error</div>
       }
-      
       
       if(this.props.data && this.props.data.allFlights){
         
@@ -60,8 +49,8 @@ class FlightList extends Component {
             </TableBody>
           </Table>
           <div className="flights-table__buttons">
-            <RaisedButton onClick={this.props.loadPrevEntries} label="Previous Page"  />
-            <RaisedButton onClick={this.props.loadMoreEntries} label="Next Page"  />
+            <RaisedButton onClick={this.loadPreviousPage} label="Previous Page"  />
+            <RaisedButton onClick={this.loadNextPage}  label="Next Page"  />
           </div>
           
           </div>)
@@ -71,12 +60,7 @@ class FlightList extends Component {
   } 
 }
 
-/*
-{ this.props.data.allFlights.pageInfo.hasPreviousPage && 
-          }
-          { this.props.data.allFlights.pageInfo.hasNextPage && 
-          }*/
-// 1
+
 const FEED_QUERY = gql`
 query flights($departure: String, $destination: String, $departureDate: Date, $after: String, $before: String){
   allFlights(search: 
@@ -118,9 +102,6 @@ query flights($departure: String, $destination: String, $departureDate: Date, $a
   }
 }
 `
-//departure(departure: $departure)
-// 3
-//  skip: (props) => !props.departure || !props.destination,
 
 export default graphql(FEED_QUERY, { 
   skip: (props) => !props.departure || !props.destination || !props.departureDate,
@@ -133,15 +114,15 @@ export default graphql(FEED_QUERY, {
       }
     }
   },
-  /*{ data: { loading, edges, allFlights, pageInfo, fetchMore } } */
   props(props) {
+    console.log('props: ', props);
     return {
       ...props,
-      loadMoreEntries: () => {
+      loadMoreEntries: (orientation, cursor) => {
         return props.data.fetchMore({
           query: FEED_QUERY,
           variables: {
-            after: props.data.allFlights.pageInfo.endCursor,
+            [orientation]: props.data.allFlights.pageInfo[cursor],
             ...props.data.variables
           },
           updateQuery: (previousResult, { fetchMoreResult }) => {
@@ -159,31 +140,7 @@ export default graphql(FEED_QUERY, {
             } : previousResult;
           },
         });
-      },
-      loadPrevEntries: () => {
-        return props.data.fetchMore({
-          query: FEED_QUERY,
-          variables: {
-            before: props.data.allFlights.pageInfo.startCursor,
-            ...props.data.variables
-          },
-          updateQuery: (previousResult, { fetchMoreResult }) => {
-            const newEdges = fetchMoreResult.allFlights.edges;
-            const pageInfo = fetchMoreResult.allFlights.pageInfo;
-
-            return newEdges.length ? {
-              // Put the new comments at the end of the list and update `pageInfo`
-              // so we have the new `endCursor` and `hasNextPage` values
-              allFlights: {
-                __typename: previousResult.allFlights.__typename,
-                edges: newEdges,
-                pageInfo,
-              },
-            } : previousResult;
-          },
-        });
-      },
-
+      }
     }
   }
 }) (FlightList)
