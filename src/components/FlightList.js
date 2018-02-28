@@ -29,18 +29,16 @@ class FlightList extends Component {
   render() {
 
       if (this.props.data && this.props.data.loading) {
-        console.log('loading ', this.props);
+        
         return <div>Loading</div>
       }
       if (this.props.data && this.props.data.error) {
-        console.log('this.props erro: ', this.props);
+        
         return <div>Error</div>
       }
-      console.log('wasnt me');
-      console.log('this.props.data && this.props.data.allFlights: ', this);
+      
+      
       if(this.props.data && this.props.data.allFlights){
-        
-        console.log('fetched ', this.props);
         
         return (<div className="flights-table">
           <Table>
@@ -63,9 +61,7 @@ class FlightList extends Component {
           </Table>
           <div className="flights-table__buttons">
             <RaisedButton onClick={this.props.loadPrevEntries} label="Previous Page"  />
-            { this.props.data.allFlights.pageInfo.hasNextPage && 
             <RaisedButton onClick={this.props.loadMoreEntries} label="Next Page"  />
-            }
           </div>
           
           </div>)
@@ -126,8 +122,6 @@ query flights($departure: String, $destination: String, $departureDate: Date, $a
 // 3
 //  skip: (props) => !props.departure || !props.destination,
 
-
-console.log('this.props: ', this.props);
 export default graphql(FEED_QUERY, { 
   skip: (props) => !props.departure || !props.destination || !props.departureDate,
   options: (props) =>{ 
