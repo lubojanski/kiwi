@@ -104,18 +104,21 @@ query flights($departure: String, $destination: String, $departureDate: Date, $a
 `
 
 export default graphql(FEED_QUERY, { 
-  skip: (props) => !props.departure || !props.destination || !props.departureDate,
+  skip: (props) => {
+    return !props.formBuffer
+    //return !props.formBuffer.departure || !props.formBuffer.destination || !props.formBuffer.departureDate
+  },
   options: (props) =>{ 
     return{
       variables: { 
-        departure: props.departure , 
-        destination: props.destination,
-        departureDate: props.departureDateFormatted
+        departure: props.formBuffer.departure , 
+        destination: props.formBuffer.destination,
+        departureDate: props.formBuffer.departureDateFormatted
       }
     }
   },
   props(props) {
-    console.log('props: ', props);
+    
     return {
       ...props,
       loadMoreEntries: (orientation, cursor) => {
@@ -130,8 +133,6 @@ export default graphql(FEED_QUERY, {
             const pageInfo = fetchMoreResult.allFlights.pageInfo;
 
             return newEdges.length ? {
-              // Put the new comments at the end of the list and update `pageInfo`
-              // so we have the new `endCursor` and `hasNextPage` values
               allFlights: {
                 __typename: previousResult.allFlights.__typename,
                 edges: newEdges,

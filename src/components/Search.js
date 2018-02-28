@@ -2,13 +2,14 @@ import React, { Component } from 'react'
 import gql from 'graphql-tag'
 import { graphql } from 'react-apollo'
 
-import {DatePicker, AutoComplete} from 'material-ui';
+import {DatePicker, AutoComplete, RaisedButton} from 'material-ui';
 
 
 class Search extends Component {
 
   render() {
     return (
+        <form onSubmit={this.props.handleSubmit}>
         <div className="search-bar">
             <AutoComplete
                 hintText="Wroclaw"
@@ -33,7 +34,9 @@ class Search extends Component {
                 mode="landscape"
             />
             </div>
+            <RaisedButton className="search-bar__button" label="Search" type="submit"  />
         </div>
+        </form>
     ) 
   } 
 }

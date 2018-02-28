@@ -23,3 +23,6 @@ body {
   display: flex;
   justify-content: center;
 }
+.search-bar__button{
+  margin: auto;
+}
