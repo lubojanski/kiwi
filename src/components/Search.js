@@ -9,7 +9,7 @@ class Search extends Component {
 
   render() {
     return (
-        <form onSubmit={this.props.handleSubmit}>
+        <form onSubmit={this.props.handleSearchSubmit}>
         <div className="search-bar">
             <AutoComplete
                 hintText="Wroclaw"
